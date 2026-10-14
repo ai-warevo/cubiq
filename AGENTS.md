@@ -30,6 +30,7 @@ The project follows a granular modular design with strict `inc/src` separation.
 2. **Granularity:** Every feature is a module. Avoid monolithic files.
 3. **Strict Inc/Src:** All modules must separate headers (`inc/`) from implementation (`src/`).
 4. **Single Source of Truth:** Offsets are stored ONLY in `app/common/structures/inc/Offsets.hpp`.
+5. **Language Policy: ALL code comments MUST be written in English.** Do not use any other language for technical documentation or source code comments.
 
 ## 🤖 Agent Manifest (Roles)
 When tasks are delegated, the following personas should be invoked:
