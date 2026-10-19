@@ -10,6 +10,9 @@ generate_product_version(EXTERNAL_RESOURCES
     COMPANY_COPYRIGHT "Cubiq Project (C) Copyright 2026"
     FILE_DESCRIPTION "Cubiq External Cheat"
     ICON "${CMAKE_SOURCE_DIR}/app/icon.ico"
+    AUTHOR "ai vibeqodez"
+    INTERNAL_NAME "cubiq_external.exe"
+    ORIGINAL_FILENAME "cubiq_external.exe"
 )
 
 add_executable(cubiq_external 

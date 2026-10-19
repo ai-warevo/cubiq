@@ -49,6 +49,7 @@ function(generate_product_version outfiles)
         VERSION_FULL
         COMPANY_NAME
         COMPANY_COPYRIGHT
+        AUTHOR
         COMMENTS
         ORIGINAL_FILENAME
         INTERNAL_NAME
@@ -88,8 +89,8 @@ function(generate_product_version outfiles)
         string(TIMESTAMP PRODUCT_CURRENT_YEAR "%Y")
         set(PRODUCT_COMPANY_COPYRIGHT "${PRODUCT_COMPANY_NAME} (C) Copyright ${PRODUCT_CURRENT_YEAR}")
     endif()
-    if (NOT PRODUCT_COMMENTS OR "${PRODUCT_COMMENTS}" STREQUAL "")
-        set(PRODUCT_COMMENTS "${PRODUCT_NAME} v${PRODUCT_VERSION_MAJOR}.${PRODUCT_VERSION_MINOR}")
+    if (NOT PRODUCT_AUTHOR OR "${PRODUCT_AUTHOR}" STREQUAL "")
+        set(PRODUCT_AUTHOR "")
     endif()
     if (NOT PRODUCT_ORIGINAL_FILENAME OR "${PRODUCT_ORIGINAL_FILENAME}" STREQUAL "")
         set(PRODUCT_ORIGINAL_FILENAME "${PRODUCT_NAME}")

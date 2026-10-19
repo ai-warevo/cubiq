@@ -53,6 +53,10 @@
 #define PRODUCT_ICON "@PRODUCT_ICON@"
 #endif
 
+#ifndef PRODUCT_AUTHOR
+#define PRODUCT_AUTHOR "@PRODUCT_AUTHOR@\0"
+#endif
+
 #ifndef PRODUCT_COMMENTS
 #define PRODUCT_COMMENTS           "@PRODUCT_COMMENTS@\0"
 #endif

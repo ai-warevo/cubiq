@@ -43,6 +43,7 @@ BEGIN
             VALUE "OriginalFilename", PRODUCT_ORIGINAL_FILENAME
             VALUE "ProductName", PRODUCT_BUNDLE
             VALUE "ProductVersion", PRODUCT_VERSION_RESOURCE_STR
+            VALUE "Author", PRODUCT_AUTHOR
         END
     END
     BLOCK "VarFileInfo"
