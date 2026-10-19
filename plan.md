@@ -1,71 +1,46 @@
-# Project Cubiq: Framework Transformation Plan
+### 🔍 Результаты аудита нарушений:
 
-## 🎯 Main Goal
-To transform **cubiq** from a single-game cheat project into a professional-grade, modular **Cheat Development Framework**. 
+1.  **Нарушение PAL (Platform Abstraction Layer)**:
+    В `core/utils/inc/` обнаружены прямые инклуды `<windows.h>` в файлах:
+    - `Process.hpp`
+    - `ProcessUtils.hpp`
+    - `WindowUtils.hpp`
+    - `MemoryUtils.hpp`
+    - `InputUtils.hpp`
+    **Это недопустимо.** Эти файлы должны быть частью реализации платформы (например, `core/platform/win32`), а не лежать в общих утилитах, которые могут использоваться логикой.
 
-The ultimate objective is to create an environment where developing a cheat for a new game requires only defining its memory structures (offsets) and implementing a thin "glue" layer that **assembles** the desired functionality from available core plugins.
+2.  **Нарушение IoC (Inversion of Control)**:
+    Хотя папки `core/cheats` перенесены, я вижу, что они всё еще выглядят как старые модули. Если они внутри себя используют `MemoryUtils` напрямую через статические вызовы, а не через внедренный интерфейс `IMemory`, то IoC отсутствует.
 
----
-
-## 🧠 The Core Philosophy: Assembler Architecture
-We move away from monolithic libraries towards a **Plugin & Engine** model based on **Inversion of Control (IoC)**. The architecture is divided into four distinct layers:
-
-1.  **The Brain (`core/logic`) — [Plugins]**: Independent, granular algorithmic modules (e.g., `AimbotPlugin`, `ESPPlugin`). They are strictly decoupled from OS and game data; they receive dependencies via **Dependency Injection**.
-2.  **The Engines (`core/modes`) — [Technical Modes & Lifecycle]**: The technical implementation of a mode and its OS-level lifecycle (e.g., `ExternalEngine` managing `WinMain`/Overlay, `InternalEngine` managing `DllMain`/Hooks).
-3.  **The Glue (`games/{game}/implementation`) — [The Assembler]**: The layer that defines the final application. It selects which **Engine** to use, which **Plugins** to activate, and provides the data via interfaces.
-4.  **The Data (`games/{game}/structures`) — [Source of Truth]**: Offsets and memory layouts unique to each game.
-
----
-
-## 🛠️ The Problem (Current State)
-Currently, the project is "coupled":
-- **Logic depends on Data**: Algorithms in `app/common/cheats` directly include `Offsets.hpp`.
-- **Implementation depends on Logic**: The modes (Internal/External) are mixed with game-specific code.
-- **Lifecycle Leakage**: Game-specific code is responsible for OS-level entry points (`main`, `DllMain`), making it hard to reuse the "mode" logic.
-- **Monolithic Interfaces**: We assume every object has "health" or "life", which breaks for non-shooter genres.
-- **Platform Coupling**: Direct usage of `<windows.h>` and `<tlhelp32.h>` prevents testing without a live OS/Process environment.
+3.  **Нарушение разделения слоев**:
+    В `core/utils/inc/` лежат файлы, которые по сути являются "руками" (реализацией доступа к системе), но они названы просто `utils`. Это размывает границу между **Инструментами** и **Движком**.
 
 ---
 
-## 🚀 Transformation Roadmap
+### 🛠️ План исправления: "The Great Decoupling"
 
-### Phase 1: Structural Reorganization & Extraction (The "Great Split")
-**What:** Rename directories and, most importantly, **extract** generic mode logic and lifecycle management from game-specific code.
-**How:** 
-- Create `core/modes/{external, internal, kernel}` to house the technical engines and OS entry points (`WinMain`, `DllMain` logic).
-- Analyze `app/external`, `app/internal`, etc., and move the *generic engine logic* (e.g., overlay management, hook orchestration) into `core/modes`.
-- Move the *game-specific implementation* (the "Glue") into `games/assaultcube/{external, internal, kernel}`.
-- Create `core/logic/` for independent plugins.
-**Why:** To establish the physical boundaries of the framework and ensure that Engines are reusable across all games.
+Я разделю процесс на три четких этапа. Мы не перейдем к следующему, пока не убедимся, что текущий этап выполнен чисто.
 
-### Phase 2: Interface Segregation & Platform Abstraction (The "Contract")
-**What:** Replace monolithic interfaces with small, specialized ones and abstract the OS layer.
-**How:** 
-- **Granular Interfaces**: Create `core/interfaces/IPositionable`, `IValue`, `ILifeCycle`.
-- **Platform Abstraction Layer (PAL)**: Create `core/platform/` containing interfaces like `IProcessManager` (replacing `tlhelp32.h`) and `IMemory`. 
-- **Dependency Injection**: Ensure all `core/logic` modules receive their dependencies via constructors, never via static calls or global state.
-**Why:** To allow support for any genre and enable **Unit Testing** by allowing Mock implementations of the OS and Memory.
+#### Этап 1: Создание Фундамента (PAL & Interfaces)
+Мы создадим слой абстракции, который станет "щитом" между логикой и Windows API.
 
-### Phase 3: Logic Decoupling (The "Pluginization")
-**What:** Refactor all algorithms into independent plugins that depend only on granular interfaces.
-**How:** 
-- Change `Aimbot::calculate(uintptr_t target)` $\rightarrow$ `Aimbot::execute(IPositionable* target)`.
-- Ensure plugins have zero knowledge of game offsets or specific memory access methods.
-**Why:** To make the "Brain" truly modular and pluggable.
+1.  **Создать `core/interfaces/`**: Здесь будут только чистые контракты (абстрактные классы).
+    *   `IProcessManager.hpp` (вместо прямого использования `tlhelp32.h`).
+    *   `IMemory.hpp` (вместо прямого использования `MemoryUtils`).
+    *   `IWindow.hpp` (вместо `WindowUtils`).
+2.  **Создать `core/platform/win32/`**: Это будет единственное место в проекте, где разрешено использовать `<windows.h>`. Здесь мы напишем реализации наших интерфейсов.
 
-### Phase 4: Implementation & Verification (The "First Assembler")
-**What:** Re-implement AssaultCube as the first "client" of the new framework.
-**How:** 
-- Create `games/assaultcube/structures/`.
-- Implement the Glue layer that connects `ACMemory` and `ACPlayer` to the core interfaces.
-- In `main.cpp`, **assemble** the application by selecting the `ExternalEngine` (which handles the entry point) and specific plugins (`AimbotPlugin`, etc.).
-**Why:** To prove the framework works as a true assembler/orchestrator.
+#### Этап 2: Миграция и Переименование (Moving Utils to Platform)
+Мы превратим "утилиты" в "реализации".
 
----
+1.  **Перенос**: Мы переместим содержимое `core/utils/` в `core/platform/win32/`.
+2.  **Рефакторинг имен**: 
+    *   `MemoryUtils.cpp` $\rightarrow$ `Win32Memory.cpp` (реализует `IMemory`).
+    *   `ProcessUtils.cpp` $\rightarrow$ `Win32Process.cpp` (реализует `IProcessManager`).
+3.  **Очистка**: Мы удалим все `#include <windows.h>` из всех файлов, кроме тех, что лежат в `core/platform/win32/`.
 
-## 📈 Success Criteria
-1.  **Zero Game Knowledge in Core**: A developer can look at `core/logic/aimbot` and not find a single mention of "AssaultCube" or any specific offset.
-2.  **Genre Agnostic**: The framework can support an RTS or RPG by simply using different plugins and interfaces.
-3.  **Zero Bloat**: The final binary for a game contains *only* the code for the selected engines and plugins.
-4.  **Testability**: Core logic can be verified via Unit Tests using Mock implementations of `IPlatform` and `IMemory`.
-5.  **Rapid Prototyping**: Adding a new game is a matter of "assembling" existing parts in a new `games/` folder.
+#### Этап 3: Внедрение зависимостей (IoC Refactoring)
+Это самый трудоемкий этап. Мы "выкорчуем" прямые вызовы утилит из логики.
+
+1.  **Аудит `core/logic`**: Я найду все места, где плагины (Aimbot, ESP и т.д.) используют `MemoryUtils::Read` или `ProcessUtils::Find`.
+2.  **Dependency Injection**: Мы изменим конструкторы всех плагинов так, чтобы они принимали указатели на интерфейсы (`IMemory*`,
