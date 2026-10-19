@@ -1,10 +1,11 @@
 # Configuration mode: Debug or Release (default: Debug)
 CONFIG ?= Release
+ARGS ?=
 
 # Default target: build everything
 all: build_common build_internal build_external build_kernel
 
-.PHONY: all build_common build_internal build_external build_kernel clean
+.PHONY: all build_common build_internal build_external build_kernel run_external clean
 
 # Build common (the foundation)
 build_common:
@@ -26,6 +27,11 @@ build_external: build_common
 	mkdir -p build/external
 	cmake -S . -B build/external -DEXTERNAL_ONLY=ON -DCMAKE_BUILD_TYPE=$(CONFIG)
 	cmake --build build/external --config $(CONFIG)
+
+# Run external
+run_external: build_external
+	@echo "Running cubiq_external in $(CONFIG) mode..."
+	./build/external/app/external/$(CONFIG)/cubiq_external.exe $(ARGS)
 
 # Build kernel
 build_kernel: build_common
