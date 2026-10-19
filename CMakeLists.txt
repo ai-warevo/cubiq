@@ -22,28 +22,29 @@ endif()
 
 # Logic for selective building via -D flags from Makefile
 if(COMMON_ONLY)
-    add_subdirectory(app/common)
+    add_subdirectory(core)
     return()
 endif()
 
 if(INTERNAL_ONLY)
-    # We need common to build internal, so we must include it
-    add_subdirectory(app/common)
-    add_subdirectory(app/internal)
+    # We need core to build internal, so we must include it
+    add_subdirectory(core)
+    add_subdirectory(games/assaultcube/internal)
     return()
 endif()
 
 if(EXTERNAL_ONLY)
-    add_subdirectory(app/common)
-    add_subdirectory(app/external)
+    add_subdirectory(core)
+    add_subdirectory(games/assaultcube/external)
     return()
 endif()
 
 if(KERNEL_ONLY)
-    add_subdirectory(app/common)
-    add_subdirectory(app/kernel)
+    add_subdirectory(core)
+    add_subdirectory(games/assaultcube/kernel)
     return()
 endif()
 
 # Default: build everything
-add_subdirectory(app)
+add_subdirectory(core)
+add_subdirectory(games/assaultcube)
