@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <compare>
 
 namespace cubiq::common::math {
 
@@ -12,13 +13,7 @@ struct Vector3 {
     Vector3() = default;
     Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
 
-    bool operator==(const Vector3& other) const {
-        return x == other.x && y == other.y && z == other.z;
-    }
-
-    bool operator!=(const Vector3& other) const {
-        return !(*this == other);
-    }
+    auto operator<=>(const Vector3&) const = default;
 
     Vector3 operator+(const Vector3& other) const {
         return {x + other.x, y + other.y, z + other.z};
