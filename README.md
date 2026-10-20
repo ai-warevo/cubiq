@@ -51,18 +51,21 @@ By compiling, launching, or interacting with the **cubiq** framework, you explic
 
 Проект перешел от монолитной структуры к модели **Plugin & Engine**, основанной на инверсии управления (IoC). Архитектура разделена на четыре четких уровня:
 
-### 🧠 Четыре слоя системы:
+### 🧠 Пять слоев системы:
 
-1.  **The Brain (`core/cheats`) — [Plugins]**:
+1.  **The Platform (`platform/`) — [Hardware/OS Abstraction]**:
+    Низкоуровневые реализации для взаимодействия с ОС (например, `platform/win32`). Предоставляет интерфейсы для работы с памятью, процессами и окнами.
+
+2.  **The Brain (`core/cheats`) — [Plugins]**:
     Независимые, гранулярные алгоритмические модули (например, `AimbotPlugin`, `ESPPlugin`). Они полностью отвязаны от ОС и данных игры; зависимости внедряются через **Dependency Injection**.
 
-2.  **The Engines (`core/modes`) — [Technical Modes]**:
+3.  **The Engines (`core/modes`) — [Technical Modes]**:
     Техническая реализация режима и его жизненного цикла на уровне ОС (например, `ExternalEngine` управляет окном/overlay, `InternalEngine` управляет хуками/DllMain).
 
-3.  **The Glue (`games/{game}/{mode}`) — [The Assembler]**:
+4.  **The Glue (`games/{game}/{mode}`) — [The Assembler]**:
     Слой, определяющий финальное приложение. Он выбирает нужный **Engine**, активирует необходимые **Plugins** и предоставляет им данные через интерфейсы.
 
-4.  **The Data (`games/{game}/structures`) — [Source of Truth]**:
+5.  **The Data (`games/{game}/structures`) — [Source of Truth]**:
     Оффсеты и структуры памяти, уникальные для каждой конкретной игры.
 
 ---
@@ -80,6 +83,7 @@ By compiling, launching, or interacting with the **cubiq** framework, you explic
     - `internal/` — Внутренний режим (Internal).
     - `kernel/` — Режим работы с драйвером (Kernel: Driver + Client).
     - `structures/` — Данные игры (оффсеты).
+- `platform/` — Низкоуровневые реализации ОС (например, `win32`).
 - `tests/` — Тесты для проверки корректности работы модулей.
 - `tools/` — Инструменты сборки и разработки.
 
