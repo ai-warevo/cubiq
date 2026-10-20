@@ -38,8 +38,9 @@ public:
      * @brief Sets the health of the entity.
      * @param mem The memory access implementation to use.
      * @param amount The new health value.
+     * @return true if the operation succeeded, false otherwise.
      */
-    virtual void set_health(const cubiq::platform::base::IMemoryAccess& mem, uint32_t amount) = 0;
+    virtual bool set_health(const cubiq::platform::base::IMemoryAccess& mem, uint32_t amount) = 0;
 };
 
 } // namespace cubiq::common::interfaces

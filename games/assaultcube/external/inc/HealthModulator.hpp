@@ -15,7 +15,7 @@ public:
 
     // IHealthEntity implementation
     uint32_t get_health(const cubiq::platform::base::IMemoryAccess& mem) const override;
-    void set_health(const cubiq::platform::base::IMemoryAccess& mem, uint32_t amount) override;
+    bool set_health(const cubiq::platform::base::IMemoryAccess& mem, uint32_t amount) override;
 
     // Convenience method for existing code
     void set_health(uint32_t amount);

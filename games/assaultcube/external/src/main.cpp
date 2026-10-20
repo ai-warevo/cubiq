@@ -30,8 +30,11 @@ int main() {
 
         // 2. Execute Plugins (The Brain)
         if (input.is_key_pressed(static_cast<int>(cubiq::platform::win32::VirtualKey::Back))) {
-            godmode.execute(player, mem);
-            std::cout << "God mode applied!" << std::endl;
+            if (godmode.execute(player, mem)) {
+                std::cout << "God mode applied!" << std::endl;
+            } else {
+                std::cout << "Failed to apply God mode!" << std::endl;
+            }
         }
 
         if (input.is_key_pressed(static_cast<int>(cubiq::platform::win32::VirtualKey::F1))) {

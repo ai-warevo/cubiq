@@ -34,16 +34,23 @@ public:
         return mem.read<uint32_t>(local_player + cubiq::assaultcube::offsets::health_offset);
     }
 
-    void set_health(const cubiq::platform::base::IMemoryAccess& mem, uint32_t amount) override {
+    /**
+     * @brief Sets the health of the entity.
+     * @param mem The memory access implementation to use.
+     * @param amount The new health value.
+     * @return true if the operation succeeded, false otherwise.
+     */
+    bool set_health(const cubiq::platform::base::IMemoryAccess& mem, uint32_t amount) override {
         uintptr_t local_player = m_mem.read<uintptr_t>(m_module_base + cubiq::assaultcube::offsets::local_player_ptr);
         if (!local_player) {
             std::cout << "[ACPlayer] Failed to find local player! (local_player_ptr read 0)" << std::endl;
-            return;
+            return false;
         }
         uintptr_t health_addr = local_player + cubiq::assaultcube::offsets::health_offset;
         std::cout << "[ACPlayer] Local Player: 0x" << std::hex << local_player << std::dec << std::endl;
         std::cout << "[ACPlayer] Health Address: 0x" << std::hex << health_addr << std::dec << " | Target Value: " << amount << std::endl;
         mem.write<uint32_t>(health_addr, amount);
+        return true;
     }
 
     // ICamera implementation

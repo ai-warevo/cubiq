@@ -51,20 +51,24 @@ HANDLE Win32ProcessManager::open_process_static(uint32_t pid, DWORD access) {
 }
 
 uintptr_t Win32ProcessManager::get_module_base_static(uint32_t pid, const std::wstring& module_name) {
-    uintptr_t base = 0;
     HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, pid);
     if (snapshot == INVALID_HANDLE_VALUE) return 0;
 
     MODULEENTRY32W entry;
     entry.dwSize = sizeof(entry);
 
+    uintptr_t base = 0;
     if (Module32FirstW(snapshot, &entry)) {
-        do {
-            if (_wcsicmp(module_name.c_str(), entry.szModule) == 0) {
-                base = reinterpret_cast<uintptr_t>(entry.modBaseAddr);
-                break;
-            }
-        } while (Module32NextW(snapshot, &entry));
+        if (module_name.empty()) {
+            base = reinterpret_cast<uintptr_t>(entry.modBaseAddr);
+        } else {
+            do {
+                if (_wcsicmp(module_name.c_str(), entry.szModule) == 0) {
+                    base = reinterpret_cast<uintptr_t>(entry.modBaseAddr);
+                    break;
+                }
+            } while (Module32NextW(snapshot, &entry));
+        }
     }
 
     CloseHandle(snapshot);

@@ -19,12 +19,14 @@ public:
      * @brief Executes the god mode logic on the given entity.
      * @param entity The entity to apply god mode to.
      * @param mem The memory access implementation.
+     * @return true if the operation succeeded, false otherwise.
      */
-    void execute(cubiq::common::interfaces::IHealthEntity& entity, cubiq::platform::base::IMemoryAccess& mem) const {
+    bool execute(cubiq::common::interfaces::IHealthEntity& entity, cubiq::platform::base::IMemoryAccess& mem) const {
         std::cout << "[GodModePlugin] Executing god mode..." << std::endl;
         // For now, we just set it to a fixed value or use config if we add it.
-        entity.set_health(mem, 10000); 
+        bool success = entity.set_health(mem, 10000);
         std::cout << "[GodModePlugin] Finished executing god mode." << std::endl;
+        return success;
     }
 
 private:
