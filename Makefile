@@ -50,7 +50,6 @@ help:
 # Internal target to ensure common is built first
 _common:
 	@echo "Building cubiq_common in $(CONFIG) mode with ARCH=$(ARCH)..."
-	mkdir -p build/common_$(ARCH)
 	cmake -S . -B build/common_$(ARCH) -DCOMMON_ONLY=ON -DCMAKE_BUILD_TYPE=$(CONFIG) -A $(ARCH) $(EXTRA_CMAKE_ARGS)
 	cmake --build build/common_$(ARCH) --config $(CONFIG)
 
@@ -77,7 +76,6 @@ _build_logic:
 		*) echo "Error: Invalid type '$(TYPE)'. Use common, internal, external, kernel_driver, or kernel_client."; exit 1 ;; \
 	esac; \
 	echo "Building $(GAME) $(TYPE) in $(CONFIG) mode with ARCH=$(ARCH)..."; \
-	mkdir -p build/$$BUILD_DIR; \
 	cmake -S . -B build/$$BUILD_DIR -DGAME_NAME=$(GAME) -D$$TYPE_FLAG=ON -DCMAKE_BUILD_TYPE=$(CONFIG) -A $(ARCH) $(EXTRA_CMAKE_ARGS); \
 	cmake --build build/$$BUILD_DIR --config $(CONFIG)
 

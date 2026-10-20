@@ -5,4 +5,4 @@ add_library(cubiq_config STATIC
     src/BaseConfig.cpp
 )
 
-target_include_directories(cubiq_config PUBLIC inc ${CMAKE_SOURCE_DIR})
+target_include_directories(cubiq_config PUBLIC inc)

@@ -8,5 +8,5 @@ add_library(platform_win32 STATIC
     src/Win32WindowManager.cpp
 )
 
-target_include_directories(platform_win32 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_SOURCE_DIR})
+target_include_directories(platform_win32 PUBLIC inc)
 target_link_libraries(platform_win32 PUBLIC platform_base)
