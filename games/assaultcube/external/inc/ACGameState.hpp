@@ -15,15 +15,15 @@ namespace cubiq::assaultcube::external {
 class ACGameState : public cubiq::common::interfaces::IPlayerProviderGameState, public cubiq::common::interfaces::IPlayerProvider {
 public:
     ACGameState() 
-        : m_mem(nullptr), m_module_base(0), m_player(nullptr) {}
+        : m_mem(nullptr), m_module_base(0), m_player(nullptr, 0) {}
 
     ACGameState(cubiq::platform::base::IMemoryAccess& mem_access, uintptr_t module_base)
         : m_mem(&mem_access), m_module_base(module_base), 
-          m_player(std::make_unique<ACPlayer>(*m_mem, m_module_base)) {}
+          m_player(&mem_access, module_base) {}
 
     cubiq::platform::base::IMemoryAccess& get_memory() override { return *m_mem; }
     uintptr_t get_module_base() override { return m_module_base; }
-    cubiq::common::interfaces::IPlayer& get_player() override { return *m_player; }
+    cubiq::common::interfaces::IPlayer& get_player() override { return m_player; }
 
     /**
      * @brief Provides access to the player provider.
@@ -37,14 +37,16 @@ public:
         if (m_mem != &mem || m_module_base != module_base) {
             m_mem = &mem;
             m_module_base = module_base;
-            m_player = std::make_unique<ACPlayer>(*m_mem, m_module_base);
+            m_player.update(m_mem, m_module_base);
+        } else {
+            m_player.update(m_mem, m_module_base);
         }
     }
 
 private:
     cubiq::platform::base::IMemoryAccess* m_mem;
     uintptr_t m_module_base;
-    std::unique_ptr<cubiq::assaultcube::external::ACPlayer> m_player;
+    cubiq::assaultcube::external::ACPlayer m_player;
 };
 
 } // namespace cubiq::assaultcube::external

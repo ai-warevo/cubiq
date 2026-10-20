@@ -16,7 +16,7 @@ namespace cubiq::assaultcube::external {
  */
 class ACPlayer : public cubiq::common::interfaces::IPlayer {
 public:
-    ACPlayer(const cubiq::platform::base::IMemoryAccess& mem_reader, uintptr_t module_base)
+    ACPlayer(const cubiq::platform::base::IMemoryAccess* mem_reader, uintptr_t module_base)
         : m_mem(mem_reader), m_module_base(module_base), m_local_player(0) {
         update_local_player();
     }
@@ -25,13 +25,26 @@ public:
      * @brief Refreshes the cached local player pointer.
      */
     void update_local_player() {
-        m_local_player = m_mem.read<uintptr_t>(m_module_base + cubiq::assaultcube::structures::local_player_ptr);
+        if (m_mem && m_module_base != 0) {
+            m_local_player = m_mem->read<uintptr_t>(m_module_base + cubiq::assaultcube::structures::local_player_ptr);
+        } else {
+            m_local_player = 0;
+        }
+    }
+
+    /**
+     * @brief Updates the internal state with new memory access or module base.
+     */
+    void update(const cubiq::platform::base::IMemoryAccess* mem, uintptr_t module_base) {
+        m_mem = mem;
+        m_module_base = module_base;
+        update_local_player();
     }
 
     // IPositionable implementation (via IHealthEntity)
     cubiq::common::math::Vector3 get_position() const override {
-        if (!m_local_player) return {};
-        return m_mem.read<cubiq::common::math::Vector3>(m_local_player + cubiq::assaultcube::structures::player_pos_offset);
+        if (!m_local_player || !m_mem) return {};
+        return m_mem->read<cubiq::common::math::Vector3>(m_local_player + cubiq::assaultcube::structures::player_pos_offset);
     }
 
     // IHealthEntity implementation
@@ -60,18 +73,18 @@ public:
 
     // ICamera implementation
     cubiq::common::math::Vector3 get_view_angles() const override {
-        if (!m_local_player) return {};
-        return m_mem.read<cubiq::common::math::Vector3>(m_local_player + cubiq::assaultcube::structures::view_angles_offset);
+        if (!m_local_player || !m_mem) return {};
+        return m_mem->read<cubiq::common::math::Vector3>(m_local_player + cubiq::assaultcube::structures::view_angles_offset);
     }
 
     // IViewAngleWriter implementation
     void write_view_angles(const cubiq::common::math::Vector3& angles) override {
-        if (!m_local_player) return;
-        m_mem.write<cubiq::common::math::Vector3>(m_local_player + cubiq::assaultcube::structures::view_angles_offset, angles);
+        if (!m_local_player || !m_mem) return;
+        m_mem->write<cubiq::common::math::Vector3>(m_local_player + cubiq::assaultcube::structures::view_angles_offset, angles);
     }
 
 private:
-    const cubiq::platform::base::IMemoryAccess& m_mem;
+    const cubiq::platform::base::IMemoryAccess* m_mem;
     uintptr_t m_module_base;
     uintptr_t m_local_player;
 };

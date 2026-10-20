@@ -28,18 +28,28 @@ public:
             return [](cubiq::common::interfaces::IGameState&) { return cubiq::common::interfaces::TaskResult::Stop; };
         }
 
-        return [this, specialized_state](cubiq::common::interfaces::IGameState&) -> cubiq::common::interfaces::TaskResult {
+        struct TaskCache {
+            const cubiq::common::interfaces::IPlayer* last_player = nullptr;
+            cubiq::common::interfaces::IHealthEntity* cached_health_entity = nullptr;
+        };
+        auto cache = std::make_shared<TaskCache>();
+
+        return [this, specialized_state, cache](cubiq::common::interfaces::IGameState&) -> cubiq::common::interfaces::TaskResult {
             auto& player = specialized_state->get_player_provider().get_player();
             
-            // We assume the player implements IHealthEntity. 
-            // In a more robust system, we might check this once during enable.
-            if (auto* health_entity = dynamic_cast<cubiq::common::interfaces::IHealthEntity*>(&player)) {
-                bool success = this->execute(*health_entity, specialized_state->get_memory());
+            if (&player != cache->last_player) {
+                cache->cached_health_entity = dynamic_cast<cubiq::common::interfaces::IHealthEntity*>(&player);
+                cache->last_player = &player;
+                if (!cache->cached_health_entity) {
+                    std::cout << "[GodModePlugin] Error: Player does not implement IHealthEntity!" << std::endl;
+                }
+            }
+
+            if (cache->cached_health_entity) {
+                bool success = this->execute(*cache->cached_health_entity, specialized_state->get_memory());
                 if (!success) {
                     std::cout << "[GodModePlugin] Execute failed!" << std::endl;
                 }
-            } else {
-                std::cout << "[GodModePlugin] Error: Player does not implement IHealthEntity!" << std::endl;
             }
 
             return cubiq::common::interfaces::TaskResult::Continue;
