@@ -6,6 +6,7 @@
 #include "core/interfaces/inc/IPlayerProviderGameState.hpp"
 #include "core/cheats/godmode/inc/GodModeConfig.hpp"
 #include "platform/base/inc/IMemoryAccess.hpp"
+#include <iostream>
 
 namespace cubiq::common::cheats::godmode {
 
@@ -23,6 +24,7 @@ public:
     cubiq::PluginTask enable(cubiq::IGameState& state) override {
         auto* specialized_state = dynamic_cast<cubiq::IPlayerProviderGameState*>(&state);
         if (!specialized_state) {
+            std::cout << "[GodModePlugin] Error: Failed to cast IGameState to IPlayerProviderGameState!" << std::endl;
             return [](cubiq::IGameState&) { return cubiq::TaskResult::Stop; };
         }
 
@@ -32,7 +34,12 @@ public:
             // We assume the player implements IHealthEntity. 
             // In a more robust system, we might check this once during enable.
             if (auto* health_entity = dynamic_cast<cubiq::common::interfaces::IHealthEntity*>(&player)) {
-                this->execute(*health_entity, specialized_state->get_memory());
+                bool success = this->execute(*health_entity, specialized_state->get_memory());
+                if (!success) {
+                    std::cout << "[GodModePlugin] Execute failed!" << std::endl;
+                }
+            } else {
+                std::cout << "[GodModePlugin] Error: Player does not implement IHealthEntity!" << std::endl;
             }
 
             return cubiq::TaskResult::Continue;

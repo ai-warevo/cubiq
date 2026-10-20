@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include "core/config/inc/BaseConfig.hpp"
 
 namespace cubiq::common::cheats::godmode {

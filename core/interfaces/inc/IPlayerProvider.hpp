@@ -11,7 +11,8 @@ namespace cubiq {
  */
 class IPlayer : public cubiq::common::interfaces::IPositionable,
                 public cubiq::common::interfaces::ICamera,
-                public cubiq::common::interfaces::IViewAngleWriter {
+                public cubiq::common::interfaces::IViewAngleWriter,
+                public cubiq::common::interfaces::IHealthEntity {
 public:
     virtual ~IPlayer() = default;
 };

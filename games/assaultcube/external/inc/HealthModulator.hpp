@@ -6,7 +6,8 @@
 
 namespace cubiq::external {
 
-class HealthModulator : public cubiq::common::interfaces::IHealthEntity {
+class HealthModulator : public cubiq::common::interfaces::IHealthEntity,
+                        public cubiq::common::interfaces::IPositionable {
 public:
     HealthModulator(const cubiq::platform::base::IMemoryAccess& mem_access, uintptr_t module_base);
 

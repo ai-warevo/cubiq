@@ -8,6 +8,7 @@
 #include "core/interfaces/inc/IPlayerProviderGameState.hpp"
 #include "core/math/inc/MathConstants.hpp"
 #include <cmath>
+#include <iostream>
 
 namespace cubiq::common::cheats::aimbot {
 
@@ -29,6 +30,7 @@ public:
     cubiq::PluginTask enable(cubiq::IGameState& state) override {
         auto* specialized_state = dynamic_cast<cubiq::IPlayerProviderGameState*>(&state);
         if (!specialized_state) {
+            std::cout << "[AimbotPlugin] Error: Failed to cast IGameState to IPlayerProviderGameState!" << std::endl;
             return [](cubiq::IGameState&) { return cubiq::TaskResult::Stop; };
         }
 

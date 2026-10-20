@@ -14,10 +14,7 @@ namespace cubiq::assaultcube::external {
  * @brief Implementation of a player entity for AssaultCube.
  * Acts as the bridge between game memory and core interfaces.
  */
-class ACPlayer : public cubiq::IPlayer,
-                  public cubiq::common::interfaces::IHealthEntity,
-                  public cubiq::common::interfaces::ICamera,
-                  public cubiq::common::interfaces::IViewAngleWriter {
+class ACPlayer : public cubiq::IPlayer {
 public:
     ACPlayer(const cubiq::platform::base::IMemoryAccess& mem_reader, uintptr_t module_base)
         : m_mem(mem_reader), m_module_base(module_base) {}

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 namespace cubiq::assaultcube::external {
 
@@ -40,19 +41,23 @@ public:
         // 1. Handle Input Mapping
         for (auto const& [key, plugin] : m_mappings) {
             if (m_input.is_key_pressed(key)) {
+                std::cout << "[ACExternalController] Key pressed: " << static_cast<int>(key) << ". Triggering plugin." << std::endl;
                 trigger_plugin(*plugin, state);
             }
         }
 
         // 2. Handle System Keys
         if (m_input.is_key_down(cubiq::Key::Escape)) {
+            std::cout << "[ACExternalController] Escape pressed. Stopping engine." << std::endl;
             m_engine.stop();
         }
 
         // 3. Execute all active tasks and prune finished ones
         std::erase_if(m_active_tasks, [&](auto& pair) {
             auto& [plugin, task] = pair;
-            if (task(state) == cubiq::TaskResult::Stop) {
+            cubiq::TaskResult result = task(state);
+            if (result == cubiq::TaskResult::Stop) {
+                std::cout << "[ACExternalController] Task stopped. Disabling plugin." << std::endl;
                 plugin->disable();
                 return true;
             }
@@ -66,10 +71,12 @@ public:
     void trigger_plugin(cubiq::IPlugin& plugin, cubiq::IGameState& state) {
         if (auto it = m_active_tasks.find(&plugin); it != m_active_tasks.end()) {
             // Plugin is already running -> Disable it
+            std::cout << "[ACExternalController] Toggling plugin: Disabling." << std::endl;
             plugin.disable();
             m_active_tasks.erase(it);
         } else {
             // Plugin is not running -> Enable it
+            std::cout << "[ACExternalController] Toggling plugin: Enabling." << std::endl;
             m_active_tasks[&plugin] = plugin.enable(state);
         }
     }

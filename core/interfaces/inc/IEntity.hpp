@@ -23,7 +23,7 @@ public:
 /**
  * @brief Interface for entities that have health.
  */
-class IHealthEntity : public IPositionable {
+class IHealthEntity {
 public:
     virtual ~IHealthEntity() = default;
 
