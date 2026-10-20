@@ -1,5 +1,6 @@
 #include "Win32ProcessManager.hpp"
 #include "Win32Process.hpp"
+#include "Win32Utils.hpp"
 #include <windows.h>
 #include <TlHelp32.h>
 #include <string.h>
@@ -27,22 +28,22 @@ std::unique_ptr<cubiq::platform::base::IProcess> Win32ProcessManager::open_proce
 
 uint32_t Win32ProcessManager::get_process_id_static(const std::wstring& process_name) {
     uint32_t pid = 0;
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (snapshot == INVALID_HANDLE_VALUE) return 0;
+    UniqueHandle snapshot(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0));
+    HANDLE h = snapshot.get();
+    if (h == INVALID_HANDLE_VALUE) return 0;
 
     PROCESSENTRY32W entry;
     entry.dwSize = sizeof(entry);
 
-    if (Process32FirstW(snapshot, &entry)) {
+    if (Process32FirstW(h, &entry)) {
         do {
             if (_wcsicmp(process_name.c_str(), entry.szExeFile) == 0) {
                 pid = entry.th32ProcessID;
                 break;
             }
-        } while (Process32NextW(snapshot, &entry));
+        } while (Process32NextW(h, &entry));
     }
 
-    CloseHandle(snapshot);
     return pid;
 }
 
@@ -51,14 +52,15 @@ HANDLE Win32ProcessManager::open_process_static(uint32_t pid, DWORD access) {
 }
 
 uintptr_t Win32ProcessManager::get_module_base_static(uint32_t pid, const std::wstring& module_name) {
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, pid);
-    if (snapshot == INVALID_HANDLE_VALUE) return 0;
+    UniqueHandle snapshot(CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, pid));
+    HANDLE h = snapshot.get();
+    if (h == INVALID_HANDLE_VALUE) return 0;
 
     MODULEENTRY32W entry;
     entry.dwSize = sizeof(entry);
 
     uintptr_t base = 0;
-    if (Module32FirstW(snapshot, &entry)) {
+    if (Module32FirstW(h, &entry)) {
         if (module_name.empty()) {
             base = reinterpret_cast<uintptr_t>(entry.modBaseAddr);
         } else {
@@ -67,11 +69,10 @@ uintptr_t Win32ProcessManager::get_module_base_static(uint32_t pid, const std::w
                     base = reinterpret_cast<uintptr_t>(entry.modBaseAddr);
                     break;
                 }
-            } while (Module32NextW(snapshot, &entry));
+            } while (Module32NextW(h, &entry));
         }
     }
 
-    CloseHandle(snapshot);
     return base;
 }
 

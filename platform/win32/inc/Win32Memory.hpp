@@ -21,6 +21,10 @@ public:
         return WriteProcessMemory(m_process_handle, reinterpret_cast<LPVOID>(address), buffer, size, nullptr);
     }
 
+    bool is_in_range(uintptr_t address, uintptr_t base, size_t size) const override {
+        return (address >= base && address < (base + size));
+    }
+
 private:
     HANDLE m_process_handle;
 };
