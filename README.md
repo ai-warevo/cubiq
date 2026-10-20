@@ -77,7 +77,9 @@ By compiling, launching, or interacting with the **cubiq** framework, you explic
     - `cheats/` — "Мозги" (плагины).
     - `modes/` — "Двигатели" (техническая реализация режимов).
     - `interfaces/` — Контракты и абстракции.
-    - `math/`, `structures/`, `utils/`, `gui/` — Базовые компоненты.
+    - `config/` — Управление конфигурацией.
+    - `math/` — Математические функции.
+    - `gui/` — Графический интерфейс.
 - `games/{game}` — Реализации конкретных игр:
     - `external/` — Внешний режим (External).
     - `internal/` — Внутренний режим (Internal).
