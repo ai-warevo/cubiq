@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 #include <iostream>
+#include <functional>
 
 namespace cubiq::assaultcube::external {
 
@@ -21,14 +22,14 @@ class ACExternalController {
 public:
     ACExternalController(cubiq::platform::base::IInput& input, 
                          cubiq::common::modes::external::ExternalEngine& engine,
-                         const std::vector<cubiq::common::interfaces::IPlugin*>& plugins)
+                         const std::vector<std::reference_wrapper<cubiq::common::interfaces::IPlugin>>& plugins)
         : m_input(input), m_engine(engine), m_plugins(plugins) {}
 
     /**
      * @brief Binds a key to a plugin trigger.
      */
-    void bind(cubiq::platform::base::Key key, cubiq::common::interfaces::IPlugin* plugin) {
-        m_mappings[key] = plugin;
+    void bind(cubiq::platform::base::Key key, cubiq::common::interfaces::IPlugin& plugin) {
+        m_mappings.insert_or_assign(key, std::ref(plugin));
     }
 
     /**
@@ -39,10 +40,10 @@ public:
         state.update(mem, module_base);
 
         // 1. Handle Input Mapping
-        for (auto const& [key, plugin] : m_mappings) {
+        for (auto const& [key, plugin_ref] : m_mappings) {
             if (m_input.is_key_pressed(key)) {
                 std::cout << "[ACExternalController] Key pressed: " << static_cast<int>(key) << ". Triggering plugin." << std::endl;
-                trigger_plugin(*plugin, state);
+                trigger_plugin(plugin_ref.get(), state);
             }
         }
 
@@ -84,8 +85,8 @@ public:
 private:
     cubiq::platform::base::IInput& m_input;
     cubiq::common::modes::external::ExternalEngine& m_engine;
-    std::vector<cubiq::common::interfaces::IPlugin*> m_plugins;
-    std::unordered_map<cubiq::platform::base::Key, cubiq::common::interfaces::IPlugin*> m_mappings;
+    std::vector<std::reference_wrapper<cubiq::common::interfaces::IPlugin>> m_plugins;
+    std::unordered_map<cubiq::platform::base::Key, std::reference_wrapper<cubiq::common::interfaces::IPlugin>> m_mappings;
     std::unordered_map<cubiq::common::interfaces::IPlugin*, cubiq::common::interfaces::PluginTask> m_active_tasks;
 };
 

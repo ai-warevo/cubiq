@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <functional>
 #include "core/cheats/aimbot/inc/AimbotPlugin.hpp"
 #include "core/cheats/godmode/inc/GodModePlugin.hpp"
 #include "core/modes/external/inc/ExternalEngine.hpp"
@@ -24,15 +25,15 @@ int main() {
     // 3. Instantiate Plugins
     cubiq::common::cheats::aimbot::AimbotPlugin aimbot({ 2.0f, true });
     cubiq::common::cheats::godmode::GodModePlugin godmode({});
-    std::vector<cubiq::common::interfaces::IPlugin*> plugins = { &aimbot, &godmode };
+    std::vector<std::reference_wrapper<cubiq::common::interfaces::IPlugin>> plugins = { aimbot, godmode };
 
     // 4. Instantiate Game State & Controller
     cubiq::assaultcube::external::ACGameState state;
     cubiq::assaultcube::external::ACExternalController controller(input, engine, plugins);
 
     // Bindings
-    controller.bind(cubiq::platform::base::Key::Back, &godmode);
-    controller.bind(cubiq::platform::base::Key::F1, &aimbot);
+    controller.bind(cubiq::platform::base::Key::Back, godmode);
+    controller.bind(cubiq::platform::base::Key::F1, aimbot);
 
     std::wcout << L"Attached! [BACKSIDE] GodMode | [F1] Aimbot (Self) | [ESC] Exit" << std::endl;
 
