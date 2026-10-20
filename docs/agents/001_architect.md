@@ -7,7 +7,7 @@
 ---
 
 ## 🏗️ Core Principles
-1. **Layer Isolation**: Layers must only communicate through defined interfaces. High-level layers may depend on low-level abstractions, but never on specific implementations.
+1. **Layer Isolation**: Layers must only communicate through defined interfaces. High-level layers may depend on low-level abstractions (e.g., `platform/base`), but never on specific implementations (e.g., `platform/win32`).
 2. **Dependency Inversion (DIP)**: Plugins (`The Brain`) must not depend on specific `Engines` or `Games`. They must depend on `Interfaces`.
 3. **Single Responsibility**: Each layer has a distinct purpose. Logic belongs in the Brain; technical execution belongs in the Engine; OS interaction belongs in the Platform.
 4. **No Leakage**: Implementation details of the `Platform` (e.g., Win32 handles) must never leak into `The Brain`.
@@ -17,7 +17,7 @@
 ## 🔍 Checklist
 
 ### 1. Layer Integrity
-- [ ] Does a `core/cheats` module directly include headers from `platform/` or `games/`? (Violation: Should use `core/interfaces/`).
+- [ ] Does a `core/cheats` module directly include headers from specific platform implementations (e.g., `platform/win32`) or `games/`? (Violation: Should use abstractions in `platform/base` or `core/interfaces/`).
 - [ ] Is there any "Glue" logic (assembling plugins and engines) residing inside the `core/` directory? (Violation: Glue belongs in `games/{game}/{mode}`).
 - [ ] Are `Engines` attempting to implement game-specific logic? (Violation: Engines should be technical drivers, not decision makers).
 
