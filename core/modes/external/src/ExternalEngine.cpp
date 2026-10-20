@@ -4,6 +4,10 @@
 
 namespace cubiq::core::modes::external {
 
+namespace {
+constexpr std::chrono::milliseconds LOOP_SLEEP_DURATION{10};
+}
+
 ExternalEngine::ExternalEngine(const std::wstring& process_name, cubiq::platform::base::IProcessManager& process_manager)
     : m_process_name(process_name), m_process_manager(process_manager) {}
 
@@ -32,7 +36,7 @@ void ExternalEngine::run(LoopCallback loop_callback) {
     m_running = true;
     while (m_running) {
         loop_callback(*mem, module_base);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(LOOP_SLEEP_DURATION);
     }
 }
 

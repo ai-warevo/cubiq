@@ -2,6 +2,10 @@
 
 namespace cubiq::platform::win32 {
 
+namespace {
+constexpr int KEY_DOWN_MASK = 0x8000;
+}
+
 int Win32Input::to_vk(cubiq::Key key) const {
     switch (key) {
         case cubiq::Key::A: return 'A';
@@ -66,14 +70,14 @@ int Win32Input::to_vk(cubiq::Key key) const {
 bool Win32Input::is_key_down(cubiq::Key key) {
     int vk = to_vk(key);
     if (vk == 0) return false;
-    return (GetAsyncKeyState(vk) & 0x8000) != 0;
+    return (GetAsyncKeyState(vk) & KEY_DOWN_MASK) != 0;
 }
 
 bool Win32Input::is_key_pressed(cubiq::Key key) {
     int vk = to_vk(key);
     if (vk == 0) return false;
 
-    bool current_state = (GetAsyncKeyState(vk) & 0x8000) != 0;
+    bool current_state = (GetAsyncKeyState(vk) & KEY_DOWN_MASK) != 0;
     bool last_state = m_key_states[vk];
 
     if (current_state && !last_state) {
