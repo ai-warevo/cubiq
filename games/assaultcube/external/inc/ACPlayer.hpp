@@ -4,6 +4,7 @@
 #include "core/interfaces/inc/IEntity.hpp"
 #include "core/interfaces/inc/ICamera.hpp"
 #include "core/interfaces/inc/IViewAngleWriter.hpp"
+#include "core/interfaces/inc/IPlayerProvider.hpp"
 #include "platform/base/inc/IMemoryAccess.hpp"
 #include "games/assaultcube/structures/inc/Offsets.hpp"
 
@@ -13,9 +14,10 @@ namespace cubiq::assaultcube::external {
  * @brief Implementation of a player entity for AssaultCube.
  * Acts as the bridge between game memory and core interfaces.
  */
-class ACPlayer : public cubiq::common::interfaces::IHealthEntity,
-                 public cubiq::common::interfaces::ICamera,
-                 public cubiq::common::interfaces::IViewAngleWriter {
+class ACPlayer : public cubiq::IPlayer,
+                  public cubiq::common::interfaces::IHealthEntity,
+                  public cubiq::common::interfaces::ICamera,
+                  public cubiq::common::interfaces::IViewAngleWriter {
 public:
     ACPlayer(const cubiq::platform::base::IMemoryAccess& mem_reader, uintptr_t module_base)
         : m_mem(mem_reader), m_module_base(module_base) {}

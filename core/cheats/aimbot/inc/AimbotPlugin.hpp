@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/interfaces/inc/IPlugin.hpp"
+#include "core/interfaces/inc/IPlayerProvider.hpp"
 #include "core/interfaces/inc/IEntity.hpp"
 #include "core/interfaces/inc/ICamera.hpp"
 #include "core/interfaces/inc/IViewAngleWriter.hpp"
@@ -10,7 +12,7 @@ namespace cubiq::common::cheats::aimbot {
 /**
  * @brief Plugin that provides Aimbot functionality.
  */
-class AimbotPlugin {
+class AimbotPlugin : public cubiq::IPlugin {
 public:
     struct Config {
         float smoothing = 1.0f;
@@ -18,6 +20,41 @@ public:
     };
 
     explicit AimbotPlugin(const Config& config) : m_config(config) {}
+
+    /**
+     * @brief Enables the plugin and returns its task loop.
+     */
+    cubiq::PluginTask enable(cubiq::IGameState& state) override {
+        return [this](cubiq::IGameState& state) -> cubiq::TaskResult {
+            if (!m_config.enabled) return cubiq::TaskResult::Stop;
+
+            auto* player_provider = dynamic_cast<cubiq::IPlayerProvider*>(&state);
+            if (!player_provider) return cubiq::TaskResult::Stop;
+
+            auto& player = player_provider->get_player();
+            
+            // Cast to required interfaces. 
+            // We must cast from the base IPlayer pointer/reference.
+            auto* positionable = dynamic_cast<cubiq::common::interfaces::IPositionable*>(&player);
+            auto* camera = dynamic_cast<cubiq::common::interfaces::ICamera*>(&player);
+            auto* writer = dynamic_cast<cubiq::common::interfaces::IViewAngleWriter*>(&player);
+
+            if (!positionable || !camera || !writer) return cubiq::TaskResult::Stop;
+
+            // Note: In a real implementation, we would find the best target here.
+            // For now, we use the local player as a placeholder target.
+            execute(*positionable, *camera, *writer);
+
+            return cubiq::TaskResult::Continue;
+        };
+    }
+
+    /**
+     * @brief Disables the plugin and cleans up resources.
+     */
+    void disable() override {
+        // Reset any internal state if needed.
+    }
 
     /**
      * @brief Executes the aimbot logic on a target.
@@ -40,14 +77,10 @@ public:
         float dz = target_pos.z - cam_pos.z;
 
         // Calculate yaw and pitch (simplified)
-        // Note: This assumes a standard coordinate system. 
-        // In a real framework, the math might be more robust or provided by lib_math.
         float yaw = std::atan2(dy, dx);
         float distance_xz = std::sqrt(dx * dx + dy * dy);
         float pitch = std::atan2(-dz, distance_xz);
 
-        // Convert to degrees if necessary (depends on game)
-        // Most games use degrees. Let's assume degrees for now and add a comment.
         const float rad_to_deg = 180.0f / 3.14159265358979323846f;
 
         cubiq::common::math::Vector3 target_angles;
