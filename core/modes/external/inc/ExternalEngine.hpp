@@ -3,8 +3,8 @@
 #include <string>
 #include <functional>
 #include <memory>
-#include "platform/base/IMemoryAccess.hpp"
-#include "platform/base/IProcessManager.hpp"
+#include "platform/base/inc/IMemoryAccess.hpp"
+#include "platform/base/inc/IProcessManager.hpp"
 
 namespace cubiq::core::modes::external {
 

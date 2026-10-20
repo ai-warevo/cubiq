@@ -3,7 +3,7 @@
 #include <iostream>
 #include "core/interfaces/inc/IEntity.hpp"
 #include "core/cheats/godmode/inc/GodModeConfig.hpp"
-#include "platform/base/IMemoryAccess.hpp"
+#include "platform/base/inc/IMemoryAccess.hpp"
 
 namespace cubiq::common::cheats::godmode {
 

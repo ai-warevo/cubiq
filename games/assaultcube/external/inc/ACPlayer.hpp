@@ -4,7 +4,7 @@
 #include "core/interfaces/inc/IEntity.hpp"
 #include "core/interfaces/inc/ICamera.hpp"
 #include "core/interfaces/inc/IViewAngleWriter.hpp"
-#include "platform/base/IMemoryAccess.hpp"
+#include "platform/base/inc/IMemoryAccess.hpp"
 #include "games/assaultcube/structures/inc/Offsets.hpp"
 
 namespace cubiq::assaultcube::external {

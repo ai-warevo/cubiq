@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform/base/IWindow.hpp"
+#include "platform/base/inc/IWindow.hpp"
 #include <windows.h>
 #include <string>
 #include <vector>

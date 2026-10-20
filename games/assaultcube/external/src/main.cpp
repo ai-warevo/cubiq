@@ -2,8 +2,8 @@
 #include "core/cheats/aimbot/inc/AimbotPlugin.hpp"
 #include "core/cheats/godmode/inc/GodModePlugin.hpp"
 #include "core/modes/external/inc/ExternalEngine.hpp"
-#include "platform/win32/Win32Input.hpp"
-#include "platform/win32/Win32ProcessManager.hpp"
+#include "platform/win32/inc/Win32Input.hpp"
+#include "platform/win32/inc/Win32ProcessManager.hpp"
 #include "games/assaultcube/external/inc/ACPlayer.hpp"
 
 int main() {

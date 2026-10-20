@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform/base/IProcessManager.hpp"
+#include "platform/base/inc/IProcessManager.hpp"
 #include <windows.h>
 #include <string>
 

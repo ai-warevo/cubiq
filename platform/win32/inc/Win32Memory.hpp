@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform/base/IMemoryAccess.hpp"
+#include "platform/base/inc/IMemoryAccess.hpp"
 #include <windows.h>
 
 namespace cubiq::platform::win32 {

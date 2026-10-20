@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include "core/math/inc/Vector3.hpp"
-#include "platform/base/IMemoryAccess.hpp"
+#include "platform/base/inc/IMemoryAccess.hpp"
 
 namespace cubiq::common::interfaces {
 
