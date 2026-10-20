@@ -19,15 +19,15 @@ namespace cubiq::assaultcube::external {
  */
 class ACExternalController {
 public:
-    ACExternalController(cubiq::IInput& input, 
-                         cubiq::core::modes::external::ExternalEngine& engine,
-                         const std::vector<cubiq::IPlugin*>& plugins)
+    ACExternalController(cubiq::platform::base::IInput& input, 
+                         cubiq::common::modes::external::ExternalEngine& engine,
+                         const std::vector<cubiq::common::interfaces::IPlugin*>& plugins)
         : m_input(input), m_engine(engine), m_plugins(plugins) {}
 
     /**
      * @brief Binds a key to a plugin trigger.
      */
-    void bind(cubiq::Key key, cubiq::IPlugin* plugin) {
+    void bind(cubiq::platform::base::Key key, cubiq::common::interfaces::IPlugin* plugin) {
         m_mappings[key] = plugin;
     }
 
@@ -47,7 +47,7 @@ public:
         }
 
         // 2. Handle System Keys
-        if (m_input.is_key_down(cubiq::Key::Escape)) {
+        if (m_input.is_key_down(cubiq::platform::base::Key::Escape)) {
             std::cout << "[ACExternalController] Escape pressed. Stopping engine." << std::endl;
             m_engine.stop();
         }
@@ -55,8 +55,8 @@ public:
         // 3. Execute all active tasks and prune finished ones
         std::erase_if(m_active_tasks, [&](auto& pair) {
             auto& [plugin, task] = pair;
-            cubiq::TaskResult result = task(state);
-            if (result == cubiq::TaskResult::Stop) {
+            cubiq::common::interfaces::TaskResult result = task(state);
+            if (result == cubiq::common::interfaces::TaskResult::Stop) {
                 std::cout << "[ACExternalController] Task stopped. Disabling plugin." << std::endl;
                 plugin->disable();
                 return true;
@@ -68,7 +68,7 @@ public:
     /**
      * @brief Triggers a plugin (toggles it) and adds its resulting task to the active list.
      */
-    void trigger_plugin(cubiq::IPlugin& plugin, cubiq::IGameState& state) {
+    void trigger_plugin(cubiq::common::interfaces::IPlugin& plugin, cubiq::common::interfaces::IGameState& state) {
         if (auto it = m_active_tasks.find(&plugin); it != m_active_tasks.end()) {
             // Plugin is already running -> Disable it
             std::cout << "[ACExternalController] Toggling plugin: Disabling." << std::endl;
@@ -82,11 +82,11 @@ public:
     }
 
 private:
-    cubiq::IInput& m_input;
-    cubiq::core::modes::external::ExternalEngine& m_engine;
-    std::vector<cubiq::IPlugin*> m_plugins;
-    std::unordered_map<cubiq::Key, cubiq::IPlugin*> m_mappings;
-    std::unordered_map<cubiq::IPlugin*, cubiq::PluginTask> m_active_tasks;
+    cubiq::platform::base::IInput& m_input;
+    cubiq::common::modes::external::ExternalEngine& m_engine;
+    std::vector<cubiq::common::interfaces::IPlugin*> m_plugins;
+    std::unordered_map<cubiq::platform::base::Key, cubiq::common::interfaces::IPlugin*> m_mappings;
+    std::unordered_map<cubiq::common::interfaces::IPlugin*, cubiq::common::interfaces::PluginTask> m_active_tasks;
 };
 
 } // namespace cubiq::assaultcube::external

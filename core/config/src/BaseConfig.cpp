@@ -1,7 +1,7 @@
 #include "BaseConfig.hpp"
 
-namespace cubiq::config {
+namespace cubiq::common::config {
 
 // BaseConfig implementation (if any)
 
-} // namespace cubiq::config
+} // namespace cubiq::common::config

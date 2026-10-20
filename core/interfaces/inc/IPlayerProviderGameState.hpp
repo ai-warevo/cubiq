@@ -3,7 +3,7 @@
 #include "core/interfaces/inc/IGameState.hpp"
 #include "core/interfaces/inc/IPlayerProvider.hpp"
 
-namespace cubiq {
+namespace cubiq::common::interfaces {
 
 /**
  * @brief A specialized game state for environments that provide access to players.
@@ -18,4 +18,4 @@ public:
     virtual IPlayerProvider& get_player_provider() = 0;
 };
 
-} // namespace cubiq
+} // namespace cubiq::common::interfaces

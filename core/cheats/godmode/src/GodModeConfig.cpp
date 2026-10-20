@@ -1,7 +1,7 @@
 #include "GodModeConfig.hpp"
 
-namespace cubiq::cheats::godmode {
+namespace cubiq::common::cheats::godmode {
 
 // GodModeConfig implementation (if any)
 
-} // namespace cubiq::cheats::godmode
+} // namespace cubiq::common::cheats::godmode

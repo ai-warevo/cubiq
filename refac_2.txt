@@ -1,0 +1,38 @@
+# TASK 2: Namespace Refactoring - Core Logic Layer
+
+You are a senior developer continuing a multi-stage namespace refactoring process. This task focuses on the logic implementation within the `core/` directory.
+
+## Prerequisites
+This task assumes that **TASK 1 (Foundation Layer)** has already been completed. All base interfaces and math types now reside under the `cubiq::common` prefix.
+
+## Mapping Rules
+1. The base namespace is `cubiq`.
+2. Files located in the `core/` directory MUST use `cubiq::common` as their prefix (e.g., `core/cheats/aimbot/inc/AimbotPlugin.hpp` -> `cubiq::common::cheats::aimbot`).
+3. Skip `inc` and `src` directories when constructing the namespace path.
+
+## Target Files for this Task
+
+### 1. Cheats (`core/cheats/`)
+- Expected prefix: `cubiq::common::cheats::<subfolder>`
+- Files (examples):
+  - `core/cheats/aimbot/inc/AimbotPlugin.hpp` -> `cubiq::common::cheats::aimbot`
+  - `core/cheats/godmode/inc/GodModeConfig.hpp` -> `cubiq::common::cheats::godmode`
+  - `core/cheats/godmode/src/GodModeConfig.cpp` -> `cubiq::common::cheats::godmode`
+  - `core/cheats/onehitkill/inc/OneHitKillConfig.hpp` -> `cubiq::common::cheats::onehitkill`
+  - `core/cheats/onehitkill/src/OneHitKillConfig.cpp` -> `cubiq::common::cheats::onehitkill`
+
+### 2. Modes (`core/modes/`)
+- Expected prefix: `cubiq::common::modes::<subfolder>`
+- Files:
+  - `core/modes/external/inc/ExternalEngine.hpp` -> `cubiq::common::modes::external` (Note: currently uses `cubiq::core::modes::external`, change to `common`)
+  - `core/modes/external/src/ExternalEngine.cpp` -> `cubiq::common::modes::external`
+
+### 3. Structures (`core/structures/`)
+- Expected prefix: `cubiq::common::structures`
+- Files:
+  - `core/structures/inc/Offsets.hpp` (If it has a namespace, ensure it is `cubiq::common::structures`. If not, add it.)
+
+## Instructions
+1. Update the namespace declarations in the target files.
+2. Ensure that all `#include` statements within these files are updated to point to the new namespaces established in Task 1 (e.g., change `#include "core/interfaces/inc/IPlugin.hpp"` usage from `cubiq::IPlugin` to `cubiq::common::interfaces::IPlugin`).
+3. Report when all target files have been updated.

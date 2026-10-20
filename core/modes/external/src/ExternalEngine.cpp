@@ -2,7 +2,7 @@
 #include <thread>
 #include <chrono>
 
-namespace cubiq::core::modes::external {
+namespace cubiq::common::modes::external {
 
 namespace {
 constexpr std::chrono::milliseconds LOOP_SLEEP_DURATION{10};
@@ -44,4 +44,4 @@ void ExternalEngine::stop() {
     m_running = false;
 }
 
-} // namespace cubiq::core::modes::external
+} // namespace cubiq::common::modes::external

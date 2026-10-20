@@ -3,7 +3,7 @@
 #include <cstdint>
 #include "platform/base/inc/IMemoryAccess.hpp"
 
-namespace cubiq {
+namespace cubiq::common::interfaces {
 
 /**
  * @brief Base environment interface for the Assembler model.
@@ -23,4 +23,4 @@ public:
     virtual uintptr_t get_module_base() = 0;
 };
 
-} // namespace cubiq
+} // namespace cubiq::common::interfaces

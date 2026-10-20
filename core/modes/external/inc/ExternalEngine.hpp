@@ -6,7 +6,7 @@
 #include "platform/base/inc/IMemoryAccess.hpp"
 #include "platform/base/inc/IProcessManager.hpp"
 
-namespace cubiq::core::modes::external {
+namespace cubiq::common::modes::external {
 
 class ExternalEngine {
 public:
@@ -27,4 +27,4 @@ private:
     cubiq::platform::base::IProcessManager& m_process_manager;
 };
 
-} // namespace cubiq::core::modes::external
+} // namespace cubiq::common::modes::external

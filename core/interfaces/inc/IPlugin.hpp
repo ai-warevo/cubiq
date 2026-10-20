@@ -3,7 +3,7 @@
 #include <functional>
 #include "core/interfaces/inc/IGameState.hpp"
 
-namespace cubiq {
+namespace cubiq::common::interfaces {
 
 /**
  * @brief Result of a plugin task execution.
@@ -38,4 +38,4 @@ public:
     virtual void disable() = 0;
 };
 
-} // namespace cubiq
+} // namespace cubiq::common::interfaces

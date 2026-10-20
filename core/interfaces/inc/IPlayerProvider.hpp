@@ -4,7 +4,7 @@
 #include "core/interfaces/inc/ICamera.hpp"
 #include "core/interfaces/inc/IViewAngleWriter.hpp"
 
-namespace cubiq {
+namespace cubiq::common::interfaces {
 
 /**
  * @brief Abstract interface for a player entity.
@@ -26,4 +26,4 @@ public:
     virtual IPlayer& get_player() = 0;
 };
 
-} // namespace cubiq
+} // namespace cubiq::common::interfaces

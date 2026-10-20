@@ -4,7 +4,7 @@
 #include "platform/base/inc/IMemoryAccess.hpp"
 #include "games/assaultcube/structures/inc/Offsets.hpp"
 
-namespace cubiq::external {
+namespace cubiq::assaultcube::external {
 
 class HealthModulator : public cubiq::common::interfaces::IHealthEntity,
                         public cubiq::common::interfaces::IPositionable {
@@ -26,5 +26,5 @@ private:
     uintptr_t m_module_base;
 };
 
-} // namespace cubiq::external
+} // namespace cubiq::assaultcube::external
 

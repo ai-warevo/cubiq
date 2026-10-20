@@ -15,7 +15,7 @@ namespace cubiq::common::cheats::aimbot {
 /**
  * @brief Plugin that provides Aimbot functionality.
  */
-class AimbotPlugin : public cubiq::IPlugin {
+class AimbotPlugin : public cubiq::common::interfaces::IPlugin {
 public:
     struct Config {
         float smoothing = 1.0f;
@@ -27,21 +27,21 @@ public:
     /**
      * @brief Enables the plugin and returns its task loop.
      */
-    cubiq::PluginTask enable(cubiq::IGameState& state) override {
-        auto* specialized_state = dynamic_cast<cubiq::IPlayerProviderGameState*>(&state);
+    cubiq::common::interfaces::PluginTask enable(cubiq::common::interfaces::IGameState& state) override {
+        auto* specialized_state = dynamic_cast<cubiq::common::interfaces::IPlayerProviderGameState*>(&state);
         if (!specialized_state) {
             std::cout << "[AimbotPlugin] Error: Failed to cast IGameState to IPlayerProviderGameState!" << std::endl;
-            return [](cubiq::IGameState&) { return cubiq::TaskResult::Stop; };
+            return [](cubiq::common::interfaces::IGameState&) { return cubiq::common::interfaces::TaskResult::Stop; };
         }
 
-        return [this, specialized_state](cubiq::IGameState&) -> cubiq::TaskResult {
-            if (!m_config.enabled) return cubiq::TaskResult::Stop;
+        return [this, specialized_state](cubiq::common::interfaces::IGameState&) -> cubiq::common::interfaces::TaskResult {
+            if (!m_config.enabled) return cubiq::common::interfaces::TaskResult::Stop;
 
             auto& player = specialized_state->get_player_provider().get_player();
             
             execute(player, player, player);
 
-            return cubiq::TaskResult::Continue;
+            return cubiq::common::interfaces::TaskResult::Continue;
         };
     }
 

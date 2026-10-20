@@ -14,7 +14,7 @@ int main() {
     cubiq::platform::win32::Win32Input input;
 
     // 2. Instantiate Engine
-    cubiq::core::modes::external::ExternalEngine engine(L"ac_client.exe", process_manager);
+    cubiq::common::modes::external::ExternalEngine engine(L"ac_client.exe", process_manager);
 
     if (!engine.attach()) {
         std::wcerr << L"Failed to attach to ac_client.exe" << std::endl;
@@ -24,15 +24,15 @@ int main() {
     // 3. Instantiate Plugins
     cubiq::common::cheats::aimbot::AimbotPlugin aimbot({ 2.0f, true });
     cubiq::common::cheats::godmode::GodModePlugin godmode({});
-    std::vector<cubiq::IPlugin*> plugins = { &aimbot, &godmode };
+    std::vector<cubiq::common::interfaces::IPlugin*> plugins = { &aimbot, &godmode };
 
     // 4. Instantiate Game State & Controller
     cubiq::assaultcube::external::ACGameState state;
     cubiq::assaultcube::external::ACExternalController controller(input, engine, plugins);
 
     // Bindings
-    controller.bind(cubiq::Key::Back, &godmode);
-    controller.bind(cubiq::Key::F1, &aimbot);
+    controller.bind(cubiq::platform::base::Key::Back, &godmode);
+    controller.bind(cubiq::platform::base::Key::F1, &aimbot);
 
     std::wcout << L"Attached! [BACKSIDE] GodMode | [F1] Aimbot (Self) | [ESC] Exit" << std::endl;
 

@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace cubiq {
+namespace cubiq::platform::base {
 
 /**
  * @brief Platform-agnostic key codes.
@@ -34,4 +34,4 @@ public:
     virtual bool is_key_down(Key key) = 0;
 };
 
-} // namespace cubiq
+} // namespace cubiq::platform::base

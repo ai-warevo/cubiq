@@ -1,0 +1,42 @@
+# TASK 1: Namespace Refactoring - Foundation Layer
+
+You are a senior developer tasked with aligning the C++ namespace structure of this project with its file system. This is the first step of a multi-stage refactoring process.
+
+## Mapping Rules
+1. The base namespace is `cubiq`.
+2. Files located in the `core/` directory MUST use `cubiq::common` as their prefix (e.g., `core/math/inc/Vector3.hpp` -> `cubiq::common::math`).
+3. Skip `inc` and `src` directories when constructing the namespace path.
+
+## Target Files for this Task
+Refactor the following files to use the correct namespaces:
+
+### 1. Interfaces (`core/interfaces/`)
+- Expected prefix: `cubiq::common::interfaces`
+- Files:
+  - `core/interfaces/inc/ICamera.hpp`
+  - `core/interfaces/inc/IEntity.hpp`
+  - `core/interfaces/inc/IGameState.hpp`
+  - `core/interfaces/inc/IPlayerProvider.hpp`
+  - `core/interfaces/inc/IPlayerProviderGameState.hpp`
+  - `core/interfaces/inc/IPlugin.hpp`
+  - `core/interfaces/inc/IViewAngleWriter.hpp`
+
+### 2. Math (`core/math/`)
+- Expected prefix: `cubiq::common::math`
+- Files:
+  - `core/math/inc/MathConstants.hpp`
+  - `core/math/inc/Vector3.hpp`
+
+### 3. Config (`core/config/`)
+- Expected prefix: `cubiq::common::config`
+- Files:
+  - `core/config/inc/BaseConfig.hpp`
+  - `core/config/src/BaseConfig.cpp`
+
+## Instructions
+1. Update the namespace declarations in the target files.
+2. IMPORTANT: Since this is the foundation layer, many other files in the repository will now fail to compile because they still use the old namespaces (e.g., `cubiq::IPlugin`). Do NOT try to fix them in this task. 
+3. Your goal is ONLY to complete the namespace changes for these specific files.
+4. Verify that you haven't introduced syntax errors during the replacement.
+
+Report when all target files have been updated.
