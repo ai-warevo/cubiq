@@ -2,40 +2,44 @@
 #include "core/cheats/aimbot/inc/AimbotPlugin.hpp"
 #include "core/cheats/godmode/inc/GodModePlugin.hpp"
 #include "core/modes/external/inc/ExternalEngine.hpp"
-#include "core/utils/inc/InputUtils.hpp"
+#include "platform/win32/Win32Input.hpp"
+#include "platform/win32/Win32ProcessManager.hpp"
 #include "games/assaultcube/external/inc/ACPlayer.hpp"
 
 int main() {
-    cubiq::core::modes::external::ExternalEngine engine(L"ac_client.exe");
+    cubiq::platform::win32::Win32ProcessManager process_manager;
+    cubiq::core::modes::external::ExternalEngine engine(L"ac_client.exe", process_manager);
 
     if (!engine.attach()) {
         std::wcerr << L"Failed to attach to ac_client.exe" << std::endl;
         return 1;
     }
 
-    std::wcout << L"Attached! [BACKSPACE] GodMode | [F1] Aimbot (Self) | [ESC] Exit" << std::endl;
+    // --- Composition Root: Instantiate long-lived components ---
+    cubiq::common::cheats::aimbot::AimbotPlugin aimbot({ 2.0f, true });
+    cubiq::common::cheats::godmode::GodModePlugin godmode({});
+    // ------------------------------------------------------------
 
-    cubiq::common::utils::InputUtils input;
+    std::wcout << L"Attached! [BACKSIDE] GodMode | [F1] Aimbot (Self) | [ESC] Exit" << std::endl;
 
-    engine.run([&](cubiq::common::utils::IMemoryAccess& mem, uintptr_t module_base) {
+    cubiq::platform::win32::Win32Input input;
+
+    engine.run([&](cubiq::platform::base::IMemoryAccess& mem, uintptr_t module_base) {
         // 1. The Hands: Instantiate the implementation of interfaces for this game
         cubiq::assaultcube::external::ACPlayer player(mem, module_base);
 
         // 2. Execute Plugins (The Brain)
-        if (input.is_key_pressed(VK_BACK)) {
-            cubiq::common::cheats::godmode::GodModePlugin godmode({});
+        if (input.is_key_pressed(static_cast<int>(cubiq::platform::win32::VirtualKey::Back))) {
             godmode.execute(player, mem);
             std::cout << "God mode applied!" << std::endl;
         }
 
-        if (input.is_key_pressed(VK_F1)) {
-            // For demonstration, we aim at the local player itself
-            cubiq::common::cheats::aimbot::AimbotPlugin aimbot({ 2.0f, true }); // smoothing = 2.0
+        if (input.is_key_pressed(static_cast<int>(cubiq::platform::win32::VirtualKey::F1))) {
             aimbot.execute(player, player, player);
             std::cout << "Aimbot executed (on self)!" << std::endl;
         }
 
-        if (input.is_key_down(VK_ESCAPE)) {
+        if (input.is_key_down(static_cast<int>(cubiq::platform::win32::VirtualKey::Escape))) {
             engine.stop();
         }
     });

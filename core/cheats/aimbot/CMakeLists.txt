@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(cubiq_aimbot)
 
 add_library(cubiq_aimbot INTERFACE)

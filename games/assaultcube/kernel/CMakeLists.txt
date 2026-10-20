@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.15)
+project(cubiq_kernel)
+
+if(DRIVER_ONLY)
+    add_subdirectory(driver)
+elseif(CLIENT_ONLY)
+    add_subdirectory(client)
+else()
+    add_subdirectory(driver)
+    add_subdirectory(client)
+endif()

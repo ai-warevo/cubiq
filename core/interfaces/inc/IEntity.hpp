@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include "core/math/inc/Vector3.hpp"
-#include "core/utils/inc/IMemoryAccess.hpp"
+#include "platform/base/IMemoryAccess.hpp"
 
 namespace cubiq::common::interfaces {
 
@@ -32,14 +32,14 @@ public:
      * @param mem The memory access implementation to use.
      * @return The current health value.
      */
-    virtual uint32_t get_health(const cubiq::common::utils::IMemoryAccess& mem) const = 0;
+    virtual uint32_t get_health(const cubiq::platform::base::IMemoryAccess& mem) const = 0;
 
     /**
      * @brief Sets the health of the entity.
      * @param mem The memory access implementation to use.
      * @param amount The new health value.
      */
-    virtual void set_health(const cubiq::common::utils::IMemoryAccess& mem, uint32_t amount) = 0;
+    virtual void set_health(const cubiq::platform::base::IMemoryAccess& mem, uint32_t amount) = 0;
 };
 
 } // namespace cubiq::common::interfaces

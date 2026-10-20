@@ -1,12 +1,19 @@
 #pragma once
 
-#include <windows.h>
 #include <vector>
 #include <unordered_map>
+#include <windows.h>
 
-namespace cubiq::common::utils {
+namespace cubiq::platform::win32 {
 
-class InputUtils {
+// Re-exporting common WinAPI constants to avoid <windows.h> in core/games
+enum class VirtualKey : int {
+    Back = VK_BACK,
+    F1 = VK_F1,
+    Escape = VK_ESCAPE
+};
+
+class Win32Input {
 public:
     // Checks if a key is currently held down
     static bool is_key_down(int vk_code);
@@ -18,4 +25,4 @@ private:
     std::unordered_map<int, bool> m_key_states;
 };
 
-} // namespace cubiq::common::utils
+} // namespace cubiq::platform::win32

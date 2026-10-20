@@ -85,7 +85,18 @@ By compiling, launching, or interacting with the **cubiq** framework, you explic
 
 ---
 
+## 🔐 Подготовка окружения (Code Signing)
 
+Для работы с драйверами и избежания предупреждений SmartScreen необходимо создать самоподписанный сертификат подписи кода и добавить его в доверенные хранилища.
+
+1. Запустите **PowerShell от имени администратора**.
+2. Выполните:
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   .\tools\create_cert.ps1
+   ```
+
+---
 
 ## 🛠️ Сборка проекта
 

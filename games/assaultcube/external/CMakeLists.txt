@@ -1,5 +1,8 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(cubiq_external)
+
+set(CUBIQ_PLATFORM x86)
+add_compile_definitions(CUBIQ_PLATFORM="${CUBIQ_PLATFORM}")
 
 include(${CMAKE_SOURCE_DIR}/tools/version/generate_product_version.cmake)
 
@@ -23,14 +26,12 @@ add_executable(cubiq_external
 
 target_include_directories(cubiq_external PRIVATE inc ${CMAKE_SOURCE_DIR})
 
-target_link_libraries(cubiq_external PRIVATE cubiq_common cubiq_core_modes_external)
+target_link_libraries(cubiq_external PRIVATE cubiq_common cubiq_core_modes_external platform_win32)
 
 include(${CMAKE_SOURCE_DIR}/tools/find_winsdk.cmake)
 
 
 FIND_WINSDK_ITEM(MT_EXE mt.exe PROGRAM)
-
-
 if(MT_EXE)
     add_custom_command(TARGET cubiq_external POST_BUILD
         COMMAND "${MT_EXE}" -manifest "${CMAKE_CURRENT_SOURCE_DIR}/manifest.xml" "-outputresource:$<TARGET_FILE:cubiq_external>;#1"
@@ -38,4 +39,14 @@ if(MT_EXE)
     )
 else()
     message(WARNING "mt.exe not found! Manifest will not be embedded.")
+endif()
+
+FIND_WINSDK_ITEM(SIGNTOOL_EXECUTABLE signtool.exe PROGRAM)
+if(SIGNTOOL_EXECUTABLE)
+    add_custom_command(TARGET cubiq_external POST_BUILD
+        COMMAND "${SIGNTOOL_EXECUTABLE}" sign /s MY /n "ai-vibeqodez" /tr "http://timestamp.acs.microsoft.com" /td sha256 /fd SHA256 "$<TARGET_FILE:cubiq_external>"
+        COMMENT "Signing cubiq_external.exe with local developer certificate..."
+      )
+else()
+    message(WARNING "no SIGNTOOL_EXECUTABLE")
 endif()

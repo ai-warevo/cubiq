@@ -1,12 +1,12 @@
-#include "InputUtils.hpp"
+#include "Win32Input.hpp"
 
-namespace cubiq::common::utils {
+namespace cubiq::platform::win32 {
 
-bool InputUtils::is_key_down(int vk_code) {
+bool Win32Input::is_key_down(int vk_code) {
     return (GetAsyncKeyState(vk_code) & 0x8000) != 0;
 }
 
-bool InputUtils::is_key_pressed(int vk_code) {
+bool Win32Input::is_key_pressed(int vk_code) {
     bool current_state = (GetAsyncKeyState(vk_code) & 0x8000) != 0;
     bool last_state = m_key_states[vk_code];
 
@@ -20,4 +20,4 @@ bool InputUtils::is_key_pressed(int vk_code) {
     return false;
 }
 
-} // namespace cubiq::common::utils
+} // namespace cubiq::platform::win32

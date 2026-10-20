@@ -1,15 +1,17 @@
 #pragma once
 
+#include "platform/base/IMemoryAccess.hpp"
 #include <windows.h>
-#include <cstdint>
-#include "IMemoryAccess.hpp"
 
-namespace cubiq::common::utils {
+namespace cubiq::platform::win32 {
 
-class MemoryReaderWriter : public IMemoryAccess {
+/**
+ * @brief Win32 implementation of IMemoryAccess using ReadProcessMemory/WriteProcessMemory.
+ */
+class Win32Memory : public cubiq::platform::base::IMemoryAccess {
 public:
-    explicit MemoryReaderWriter(HANDLE process_handle) : m_process_handle(process_handle) {}
-    ~MemoryReaderWriter() override = default;
+    explicit Win32Memory(HANDLE process_handle) : m_process_handle(process_handle) {}
+    ~Win32Memory() override = default;
 
     bool read(uintptr_t address, void* buffer, size_t size) const override {
         return ReadProcessMemory(m_process_handle, reinterpret_cast<LPCVOID>(address), buffer, size, nullptr);
@@ -23,4 +25,4 @@ private:
     HANDLE m_process_handle;
 };
 
-} // namespace cubiq::common::utils
+} // namespace cubiq::platform::win32

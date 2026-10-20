@@ -4,7 +4,7 @@
 #include "core/interfaces/inc/IEntity.hpp"
 #include "core/interfaces/inc/ICamera.hpp"
 #include "core/interfaces/inc/IViewAngleWriter.hpp"
-#include "core/utils/inc/IMemoryAccess.hpp"
+#include "platform/base/IMemoryAccess.hpp"
 #include "games/assaultcube/structures/inc/Offsets.hpp"
 
 namespace cubiq::assaultcube::external {
@@ -17,7 +17,7 @@ class ACPlayer : public cubiq::common::interfaces::IHealthEntity,
                  public cubiq::common::interfaces::ICamera,
                  public cubiq::common::interfaces::IViewAngleWriter {
 public:
-    ACPlayer(const cubiq::common::utils::IMemoryAccess& mem_reader, uintptr_t module_base)
+    ACPlayer(const cubiq::platform::base::IMemoryAccess& mem_reader, uintptr_t module_base)
         : m_mem(mem_reader), m_module_base(module_base) {}
 
     // IPositionable implementation (via IHealthEntity)
@@ -28,13 +28,13 @@ public:
     }
 
     // IHealthEntity implementation
-    uint32_t get_health(const cubiq::common::utils::IMemoryAccess& mem) const override {
+    uint32_t get_health(const cubiq::platform::base::IMemoryAccess& mem) const override {
         uintptr_t local_player = m_mem.read<uintptr_t>(m_module_base + cubiq::assaultcube::offsets::local_player_ptr);
         if (!local_player) return 0;
         return mem.read<uint32_t>(local_player + cubiq::assaultcube::offsets::health_offset);
     }
 
-    void set_health(const cubiq::common::utils::IMemoryAccess& mem, uint32_t amount) override {
+    void set_health(const cubiq::platform::base::IMemoryAccess& mem, uint32_t amount) override {
         uintptr_t local_player = m_mem.read<uintptr_t>(m_module_base + cubiq::assaultcube::offsets::local_player_ptr);
         if (!local_player) {
             std::cout << "[ACPlayer] Failed to find local player! (local_player_ptr read 0)" << std::endl;
@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    const cubiq::common::utils::IMemoryAccess& m_mem;
+    const cubiq::platform::base::IMemoryAccess& m_mem;
     uintptr_t m_module_base;
 };
 

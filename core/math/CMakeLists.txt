@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(cubiq_math)
 
 add_library(cubiq_math INTERFACE)
