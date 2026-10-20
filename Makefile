@@ -3,6 +3,10 @@ CONFIG ?= Release
 ARGS ?=
 EXTRA_CMAKE_ARGS ?=
 
+ifeq ($(SKIP_CERT_SIGN_TIME_STEP),true)
+  EXTRA_CMAKE_ARGS += -DSKIP_CERT_SIGN_TIME_STEP=ON
+endif
+
 # Parse positional arguments for 'make build <game> <type>' and 'make run <game> <type>'
 ifeq ($(firstword $(MAKECMDGOALS)),build)
   GAME := $(word 2,$(MAKECMDGOALS))
@@ -37,6 +41,7 @@ help:
 	@echo "  make build assaultcube internal ARCH=Win32"
 	@echo "  make build assaultcube kernel_driver ARCH=x64"
 	@echo "  make build assaultcube kernel_client ARCH=Win32"
+# make run assaultcube external ARCH=Win32 EXTRA_CMAKE_ARGS="-DSKIP_CERT_SIGN_TIME_STEP=ON"
 	@echo "  make run assaultcube external ARCH=Win32"
 	@echo "  make run assaultcube kernel_client ARCH=Win32"
 	@echo ""
