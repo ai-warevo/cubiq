@@ -5,7 +5,7 @@
 namespace cubiq::common::cheats::godmode {
 
 struct GodModeConfig : public cubiq::common::config::BaseConfig {
-    // Add specific godmode settings here
+    uint32_t health_value = 10000;
 };
 
 } // namespace cubiq::common::cheats::godmode

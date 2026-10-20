@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iostream>
 #include "core/interfaces/inc/IPlugin.hpp"
 #include "core/interfaces/inc/IPlayerProvider.hpp"
 #include "core/interfaces/inc/IEntity.hpp"
+#include "core/interfaces/inc/IPlayerProviderGameState.hpp"
 #include "core/cheats/godmode/inc/GodModeConfig.hpp"
 #include "platform/base/inc/IMemoryAccess.hpp"
 
@@ -21,16 +21,19 @@ public:
      * @brief Enables the plugin and returns its task loop.
      */
     cubiq::PluginTask enable(cubiq::IGameState& state) override {
-        return [this](cubiq::IGameState& state) -> cubiq::TaskResult {
-            auto* player_provider = dynamic_cast<cubiq::IPlayerProvider*>(&state);
-            if (!player_provider) return cubiq::TaskResult::Stop;
+        auto* specialized_state = dynamic_cast<cubiq::IPlayerProviderGameState*>(&state);
+        if (!specialized_state) {
+            return [](cubiq::IGameState&) { return cubiq::TaskResult::Stop; };
+        }
 
-            auto& player = player_provider->get_player();
-            auto* health_entity = dynamic_cast<cubiq::common::interfaces::IHealthEntity*>(&player);
-            if (!health_entity) return cubiq::TaskResult::Stop;
-
-            auto& mem = state.get_memory();
-            this->execute(*health_entity, mem);
+        return [this, specialized_state](cubiq::IGameState&) -> cubiq::TaskResult {
+            auto& player = specialized_state->get_player_provider().get_player();
+            
+            // We assume the player implements IHealthEntity. 
+            // In a more robust system, we might check this once during enable.
+            if (auto* health_entity = dynamic_cast<cubiq::common::interfaces::IHealthEntity*>(&player)) {
+                this->execute(*health_entity, specialized_state->get_memory());
+            }
 
             return cubiq::TaskResult::Continue;
         };
@@ -50,11 +53,7 @@ public:
      * @return true if the operation succeeded, false otherwise.
      */
     bool execute(cubiq::common::interfaces::IHealthEntity& entity, cubiq::platform::base::IMemoryAccess& mem) const {
-        std::cout << "[GodModePlugin] Executing god mode..." << std::endl;
-        // For now, we just set it to a fixed value or use config if we add it.
-        bool success = entity.set_health(mem, 10000);
-        std::cout << "[GodModePlugin] Finished executing god mode." << std::endl;
-        return success;
+        return entity.set_health(mem, m_config.health_value);
     }
 
 private:

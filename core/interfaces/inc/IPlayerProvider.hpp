@@ -1,11 +1,17 @@
 #pragma once
 
+#include "core/interfaces/inc/IEntity.hpp"
+#include "core/interfaces/inc/ICamera.hpp"
+#include "core/interfaces/inc/IViewAngleWriter.hpp"
+
 namespace cubiq {
 
 /**
  * @brief Abstract interface for a player entity.
  */
-class IPlayer {
+class IPlayer : public cubiq::common::interfaces::IPositionable,
+                public cubiq::common::interfaces::ICamera,
+                public cubiq::common::interfaces::IViewAngleWriter {
 public:
     virtual ~IPlayer() = default;
 };

@@ -5,6 +5,8 @@
 #include "core/interfaces/inc/IEntity.hpp"
 #include "core/interfaces/inc/ICamera.hpp"
 #include "core/interfaces/inc/IViewAngleWriter.hpp"
+#include "core/interfaces/inc/IPlayerProviderGameState.hpp"
+#include "core/math/inc/MathConstants.hpp"
 #include <cmath>
 
 namespace cubiq::common::cheats::aimbot {
@@ -25,25 +27,17 @@ public:
      * @brief Enables the plugin and returns its task loop.
      */
     cubiq::PluginTask enable(cubiq::IGameState& state) override {
-        return [this](cubiq::IGameState& state) -> cubiq::TaskResult {
+        auto* specialized_state = dynamic_cast<cubiq::IPlayerProviderGameState*>(&state);
+        if (!specialized_state) {
+            return [](cubiq::IGameState&) { return cubiq::TaskResult::Stop; };
+        }
+
+        return [this, specialized_state](cubiq::IGameState&) -> cubiq::TaskResult {
             if (!m_config.enabled) return cubiq::TaskResult::Stop;
 
-            auto* player_provider = dynamic_cast<cubiq::IPlayerProvider*>(&state);
-            if (!player_provider) return cubiq::TaskResult::Stop;
-
-            auto& player = player_provider->get_player();
+            auto& player = specialized_state->get_player_provider().get_player();
             
-            // Cast to required interfaces. 
-            // We must cast from the base IPlayer pointer/reference.
-            auto* positionable = dynamic_cast<cubiq::common::interfaces::IPositionable*>(&player);
-            auto* camera = dynamic_cast<cubiq::common::interfaces::ICamera*>(&player);
-            auto* writer = dynamic_cast<cubiq::common::interfaces::IViewAngleWriter*>(&player);
-
-            if (!positionable || !camera || !writer) return cubiq::TaskResult::Stop;
-
-            // Note: In a real implementation, we would find the best target here.
-            // For now, we use the local player as a placeholder target.
-            execute(*positionable, *camera, *writer);
+            execute(player, player, player);
 
             return cubiq::TaskResult::Continue;
         };
@@ -81,7 +75,7 @@ public:
         float distance_xz = std::sqrt(dx * dx + dy * dy);
         float pitch = std::atan2(-dz, distance_xz);
 
-        const float rad_to_deg = 180.0f / 3.14159265358979323846f;
+        const float rad_to_deg = cubiq::common::math::constants::RAD_TO_DEG;
 
         cubiq::common::math::Vector3 target_angles;
         target_angles.x = pitch * rad_to_deg; // Pitch
