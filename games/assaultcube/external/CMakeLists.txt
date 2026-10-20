@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.15)
 project(cubiq_external)
 
 set(CUBIQ_PLATFORM x86)
-add_compile_definitions(CUBIQ_PLATFORM="${CUBIQ_PLATFORM}")
 
 include(${CMAKE_SOURCE_DIR}/tools/version/generate_product_version.cmake)
 
@@ -24,6 +23,7 @@ add_executable(cubiq_external
     ${EXTERNAL_RESOURCES}
 )
 
+target_compile_definitions(cubiq_external PRIVATE CUBIQ_PLATFORM="${CUBIQ_PLATFORM}")
 target_include_directories(cubiq_external PRIVATE inc ${CMAKE_SOURCE_DIR})
 
 target_link_libraries(cubiq_external PRIVATE cubiq_common cubiq_core_modes_external platform_win32)

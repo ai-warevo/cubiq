@@ -119,6 +119,7 @@ run: build
 clean:
 	@echo "Cleaning build directories..."
 	rm -rf build/
+#	-powershell -Command "if (Test-Path build) { Remove-Item -Recurse -Force build }"
 
 # Catch-all to prevent "No rule to make target" errors for the arguments
 %:
